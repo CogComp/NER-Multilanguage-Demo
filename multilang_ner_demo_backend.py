@@ -4,7 +4,20 @@ import json
 import requests
 import tabular
 
-BASE_HTML_PATH = "./multilang_html"
+import hashlib
+import cacheMultilangNER
+from datetime import datetime
+import sys 
+
+################################ Cache Loading ################################
+# Instantiate Cache Class
+cache = cacheMultilangNER.CacheNER()
+        
+cache_cogcomp = cache.load("cogcomp")
+cache_bert = cache.load("bert")
+
+################################ Service Path ################################
+BASE_HTML_PATH = "./html"
 BASE_MULTILANG_NER_HTTP = 'http://dickens.seas.upenn.edu:4033/ner'
 # BASE_MULTILANG_EDL_HTTP = 'http://macniece.seas.upenn.edu:4032/edl'
 
@@ -71,34 +84,62 @@ def initView(myTabularView,lang,text):
 '''
 
 def getMULTILANG_NER_BERT(lang,text):
-    input = {"lang":lang,"model":"bert","text":text}
-    res_out = requests.get(BASE_MULTILANG_NER_HTTP, params = input)
-    #print('==========')
-    #print(res_out.text)
-    #print('----------')
-    try:
-        res_json = json.loads(res_out.text)
-    except:
-        res_json = {"tokens":[]}
-    #print('==========')
-    #print(res_json)
-    #print('----------')
+    global cache_bert
+
+    hash_value = hashlib.sha1(text.encode()).hexdigest()
+
+    if cache.count(cache_bert) > 200:
+        cache.write('bert', cache_bert)
+        cache_bert = cache.load('bert')
+
+    if hash_value in cache_bert[lang].keys():
+        res_json, cache_bert = cache.read('bert', cache_bert, lang, hash_value)
+
+    else:
+        input = {"lang":lang,"model":"bert","text":text}
+        res_out = requests.get(BASE_MULTILANG_NER_HTTP, params = input)
+        #print('==========')
+        #print(res_out.text)
+        #print('----------')
+        try:
+            res_json = json.loads(res_out.text)
+        except:
+            res_json = {"tokens":[]}
+        #print('==========')
+        #print(res_json)
+        #print('----------')
+        cache_bert = cache.add('bert', cache_bert, lang, text, hash_value, res_json)
+
     return res_json
 
 def getMULTILANG_NER_COGCOMP(lang,text):
-    input = {"lang":lang,"model":"cogcomp","text":text}
-    res_out = requests.get(BASE_MULTILANG_NER_HTTP, params = input)
-    #print('==========')
-    #print(res_out.text)
-    #print('----------')
-    try:
-        # print(res_out.json())
-        res_json = json.loads(res_out.text)
-    except:
-        res_json = {"text_tokens":[]}
-    #print('==========')
-    #print(res_json)
-    #print('----------')
+    global cache_cogcomp
+
+    hash_value = hashlib.sha1(text.encode()).hexdigest()
+
+    if cache.count(cache_cogcomp) > 200:
+        cache.write('cogcomp', cache_cogcomp)
+        cache_cogcomp = cache.load('cogcomp')
+
+    
+    if hash_value in cache_cogcomp[lang].keys():
+        res_json, cache_cogcomp = cache.read('cogcomp', cache_cogcomp, lang, hash_value)
+
+    else:
+        input = {"lang":lang,"model":"cogcomp","text":text}
+        res_out = requests.get(BASE_MULTILANG_NER_HTTP, params = input)
+        #print('==========')
+        #print(res_out.text)
+        #print('----------')
+        try:
+            # print(res_out.json())
+            res_json = json.loads(res_out.text)
+        except:
+            res_json = {"text_tokens":[]}
+        #print('==========')
+        #print(res_json)
+        #print('----------')
+        cache_cogcomp = cache.add('cogcomp', cache_cogcomp, lang, text, hash_value, res_json)
     return res_json
 
 def processNER(myTabularView,lang,text):
@@ -246,6 +287,10 @@ class MyWebService(object):
         result = {"input": input, "html": html}
         return result
 
+################################ sys parameters ###############################
+serviceHost = sys.argv[1]
+servicePort = int(sys.argv[2])
+
 if __name__ == '__main__':
     print ("")
     print ("Starting 'Multilang' rest service...")
@@ -253,9 +298,10 @@ if __name__ == '__main__':
     cherrypy.config.update(config)
     config = {
       'global' : {
-            'server.socket_host' : 'dickens.seas.upenn.edu',
-            # 'server.socket_host' : 'localhost',
-            'server.socket_port' : 4032,
+            #'server.socket_host' : 'dickens.seas.upenn.edu',
+            'server.socket_host' : serviceHost,
+            #'server.socket_port' : 4032,
+            'server.socket_port' : servicePort,
             'cors.expose.on': True
       },
       '/': {
@@ -276,4 +322,7 @@ if __name__ == '__main__':
     }
     cherrypy.config.update(config)
     cherrypy.quickstart(MyWebService(), '/', config)
+
+    cache.write('cogcomp', cache_cogcomp)
+    cache.write('bert', cache_bert)
 

@@ -1,0 +1,32 @@
+.error { color:#A00000; background-color:#fff8f8; }
+.subtitle { color:green; background-color: #F0FFF0; font-weight:bold; text-align: left; margin: auto; width: 100%; border: 1px solid green; padding: 10px;}
+
+.ANN-Label { color:#808080; background-color:#f8f8f8; }
+
+.NER-Neural-PER { color:#000; background-color:#d9e9f9; padding:1px; }
+.NER-Neural-LOC{ color:#000; background-color:#d9f9e9; padding:1px; }
+.NER-Neural-ORG{ color:#000; background-color:#f9e9d9; padding:1px; }
+.NER-Neural-MISC{ color:#000; background-color:#d9c9e9; padding:1px; }
+.NER-Neural-GPE{ color:#000; background-color:#d9c9e9; padding:1px; }
+.NER-Neural-NORP { color:#000; background-color:#e9d9f9; padding:1px; }
+.NER-Neural-ORDINAL{ color:#000; background-color:#e9f9d9; padding:1px; }
+.NER-Neural-DATE{ color:#000; background-color:#f9d9e9; padding:1px; }
+.NER-Neural-LAW{ color:#000; background-color:#d9e9d9; padding:1px; }
+.NER-Neural-EVENT{ color:#000; background-color:#d9d9e9; padding:1px; }
+.NER-Neural-CARDINAL{ color:#000; background-color:#e9d9e9; padding:1px; }
+.NER-Neural-QUANTITY{ color:#000; background-color:#e9e9d9; padding:1px; }
+
+.NER-CogComp-PER { color:#000; background-color:#c3e3f3; padding:1px; }
+.NER-CogComp-LOC{ color:#000; background-color:#c3f3e3; padding:1px; }
+.NER-CogComp-ORG{ color:#000; background-color:#f3e3c3; padding:1px; }
+.NER-CogComp-MISC{ color:#000; background-color:#c3c3e3; padding:1px; }
+.NER-CogComp-GPE{ color:#000; background-color:#c3c3e3; padding:1px; }
+.NER-CogComp-NORP { color:#000; background-color:#e3c3f3; padding:1px; }
+.NER-CogComp-ORDINAL{ color:#000; background-color:#e3f3c3; padding:1px; }
+.NER-CogComp-DATE{ color:#000; background-color:#f3c3e3; padding:1px; }
+.NER-CogComp-LAW{ color:#000; background-color:#c3e3c3; padding:1px; }
+.NER-CogComp-EVENT{ color:#000; background-color:#c3c3e3; padding:1px; }
+.NER-CogComp-CARDINAL{ color:#000; background-color:#e3c3e3; padding:1px; }
+.NER-CogComp-QUANTITY{ color:#000; background-color:#e3e3c3; padding:1px; }
+
+
